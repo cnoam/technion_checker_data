@@ -3,16 +3,16 @@
           {
                "id": 1,
                "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6.sh",
-               "timeout": 30,
-               "allowed_extension": ["zip"]
+               "runner": "check_xv6_1.sh",
+               "timeout": 60,
+               "allowed_extension": ["patch"]
           },
         {
                "id": 2,
                "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6.sh",
-               "timeout": 30,
-               "allowed_extension": ["zip"]
+               "runner": "check_xv6_2.sh",
+               "timeout": 60,
+               "allowed_extension": ["patch"]
           }
           ],
       "94219": [

@@ -25,10 +25,10 @@ cd xv6-public
 git checkout lsproc   # <<<<<<<<<<<<<<<<<<<<<< WARNING <<<<<<<<<<<< This is hardwired
 
 set +e
-gunzip $INPUT_SRC 
-#git apply -3 $INPUT_SRC --whitespace=nowarn
+git apply -3 $INPUT_SRC --whitespace=nowarn
 if [ $? -ne 0 ]; then
-    echo "------------>> Failed unzipping"
+    echo "------------>> Failed applying your patch. Please verify your patch contains only your changes."
+    echo "and can be applied on top of commit ID " $COMMIT_ID
     exit 1
 fi
 
