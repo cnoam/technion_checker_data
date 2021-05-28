@@ -14,7 +14,7 @@ COMPARATOR=`realpath $4`
 
 TESTDIR=`mktemp -d`
 # the master copy is from https://github.com/noam1023/xv6-public.git
-MASTER_SRC_DIR=/data/xv6/xv6-public
+MASTER_SRC_DIR=/data/data/94210/xv6/xv6-public
 PATCH_DIR=/data/patches
 pushd $TESTDIR
 cp -r $MASTER_SRC_DIR .
@@ -28,11 +28,13 @@ set +e
 git apply -3 $INPUT_SRC --whitespace=nowarn
 if [ $? -ne 0 ]; then
     echo "------------>> Failed applying your patch. Please verify your patch contains only your changes."
-    echo "and can be applied on top of commit ID " $COMMIT_ID
+    echo "and can be applied on top of the baseline code"
     exit 1
 fi
 
+set -e
 git apply $PATCH_DIR/testcode.patch 
+set +e
 
 # first compile etc. so random output does not contaminate the user's program output
 make fs.img xv6.img   >& /dev/null

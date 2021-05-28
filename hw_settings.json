@@ -2,16 +2,16 @@
      "94210": [
           {
                "id": 1,
-               "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6_1.sh",
-               "timeout": 60,
+               "matcher": "check_xv6_1.py",
+               "runner": "check_xv6.sh",
+               "timeout": 200,
                "allowed_extension": ["patch"]
           },
         {
                "id": 2,
                "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6_2.sh",
-               "timeout": 60,
+               "runner": "check_xv6.sh",
+               "timeout": 200,
                "allowed_extension": ["patch"]
           }
           ],

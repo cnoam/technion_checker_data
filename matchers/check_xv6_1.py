@@ -37,7 +37,10 @@ def check(file_name_a):
     """
     with open(file_name_a,'r') as f:
         tested_output = f.read()
-    return  0 if _match(tested_output) else 42
+    isMatch = _match(tested_output)
+    if not isMatch:
+        print("Your output:\n" + tested_output)
+    return 0 if isMatch else 42
 
 def _match(string):
     prog = re.compile(regex)
