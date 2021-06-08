@@ -1,0 +1,13 @@
+diff --git a/init.c b/init.c
+index ee9df4a..aab855e 100644
+--- a/init.c
++++ b/init.c
+@@ -5,7 +5,7 @@
+ #include "user.h"
+ #include "fcntl.h"
+ 
+-//#define SINGLESHOT
++#define SINGLESHOT
+ 
+ char *argv[] = { "sh", 0 };
+ extern void check_proc_order();
