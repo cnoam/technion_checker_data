@@ -1,0 +1,50 @@
+SeaBIOS (version 1.13.0-1ubuntu1.1)
+
+
+iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+1FF8CA10+1FECCA10 CA00
+                                                                               
+
+
+Booting from Hard Disk..xv6...
+Adding pid=1 to prio=2
+cpu0: starting 0
+sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap start 58
+parent run at pid 1
+Adding pid=2 to prio=2
+Adding pid=3 to prio=2
+Adding pid=4 to prio=2
+Adding pid=5 to prio=2
+Adding pid=6 to prio=2
+Adding pid=7 to prio=2
+Adding pid=8 to prio=2
+Child(2) is setting prio: 1
+Adding pid=2 to prio=1
+Child(3) is setting prio: 1
+Adding pid=3 to prio=1
+Child(4) is setting prio: 0
+Adding pid=4 to prio=0
+Child(5) is setting prio: 0
+Adding pid=5 to prio=0
+Child(6) is setting prio: 2
+Adding pid=6 to prio=2
+Child(7) is setting prio: 2
+Adding pid=7 to prio=2
+Child(8) is setting prio: 1
+Adding pid=8 to prio=1
+
+Child(6) DONE
+
+Child(7) DONE
+
+Child(2) DONE
+
+Child(3) DONE
+
+Child(8) DONE
+
+Child(4) DONE
+
+Child(5) DONE
+
+PARENT finished
+

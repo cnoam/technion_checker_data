@@ -10,7 +10,7 @@
         {
                "id": 2,
                "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6.sh",
+               "runner": "check_xv6_2.sh",
                "timeout": 200,
                "allowed_extension": ["patch"]
           }
@@ -19,14 +19,14 @@
      {
           "id": 0,
           "matcher": "exact_match.py",
-          "runner": "check_java_file_ex0.sh",
+          "runner": "check_java_file.sh",
           "timeout": 10,
           "allowed_extension": ["java"]
      },
       {
           "id": 1,
           "matcher": "exact_match.py",
-          "runner": "check_java_file_ex1.sh",
+          "runner": "check_java_file.sh",
           "timeout": 20,
           "allowed_extension": ["zip"]
       },
