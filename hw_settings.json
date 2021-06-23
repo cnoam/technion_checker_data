@@ -46,6 +46,15 @@
            "data_path": "94219/AP_Coll_Parsed"  ,
            "COMMENT": "the data path MUST be relative path to $CHECKER_DATA_DIR/data"
       }
-     ]
+     ] ,
+     
+      "96224": [
+     {
+          "id": 2,
+          "matcher": "always_true.py",
+          "runner": "submit_spark_job.sh",
+          "timeout": 20,
+          "allowed_extension": ["py"]
+     }]
 }
     
