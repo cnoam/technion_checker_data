@@ -6,8 +6,7 @@ STORAGE_NAME=noamc3hdistorage
 CONTAINER_NAME=noam-c3-2021-04-06t10-05-57-099z
 
 # Create the SAS using the GUI in the portal, by going to the storage, select "..." and there was "generate SAS"
-SECRET_SIG="sp=racwl&st=2021-06-23T09:12:10Z&se=2021-06-23T17:12:49Z&spr=https&sv=2020-02-10&sr=c&sig=WpsaBNkYXsS3op3Z956%2B65l6r8HP%2FHCFvH6z6mp6HS0%3D"
-
+SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
 # for the uploaded file (to the azure storage) we keep only the relative name to avoid directory naming problems
 REL_PATH_SRC_FILE=`echo $SRC_FILE | cut -d'/' -f 4`
 
