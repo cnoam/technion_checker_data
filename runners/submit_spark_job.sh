@@ -19,10 +19,14 @@ export AZCOPY_JOB_PLAN_LOCATION="/logs"
 
 echo Sending source for execution
 # send to spark for processing
-x=`curl -k --user "admin:$LIVY_PASS" \
+
+# We need Kafka package with the Spark. Since Azure uses Spark 2.4, we need to use a matching package.
+#https://mvnrepository.com/artifact/org.apache.spark/spark-sql-kafka-0-10_2.12
+x=`curl --silent -k --user "admin:$LIVY_PASS" \
 -X POST --data "{ \"file\":\"wasbs:///$REL_PATH_SRC_FILE\" , \
 \"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\", \
-\"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\" } \
+\"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\",  \
+\"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8\" }\
  }" \
 "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches" \
 -H "X-Requested-By: admin" \
@@ -39,11 +43,34 @@ if [ $? -ne 0  ]; then
    echo "Job submission failed. See the log in Azure portal for batch ID " $BATCH_ID
 else
    echo "Job is starting..."
-   echo "You can check the status at https://$CLUSTER_NAME.azurehdinsight.net/yarnui/hn/cluster"
+   #echo "You can check the status at https://$CLUSTER_NAME.azurehdinsight.net/yarnui/hn/cluster"
 fi
 
 echo "BATCH ID = " $BATCH_ID
 
+sleep 10
+set -e
 # check the status of the batch
-#curl -k --user "admin:$LIVY_PASS"  -H "Content-Type: application/json"   "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches/$BATCH_ID" -H "X-Requested-By: admin" | jq
+y=`curl --silent -k --user "admin:$LIVY_PASS"  -H "Content-Type: application/json"  \
+    "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches/$BATCH_ID"   \
+    -H "X-Requested-By: admin"`
+
+#echo Y=$y
+#echo "=============="
+appId=`echo $y | jq .appId`
+#echo APP ID = $appId
+
+# get the logs (maybe too early )
+# MUST use public key here.
+# run ssh-copyid sshuser@$CLUSTER_NAME-ssh.azurehdinsight.net before!!
+#logs=`ssh sshuser@$CLUSTER_NAME-ssh.azurehdinsight.net yarn logs -applicationId $appId`
+#echo LOGS =======
+#echo $logs > log_output
+echo To see the logs:     https://$MY_SERVER/spark/logs?appId=$appId
+
+
+
+
+
+
 
