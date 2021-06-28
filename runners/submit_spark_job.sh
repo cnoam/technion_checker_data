@@ -4,6 +4,7 @@ SRC_FILE=$1
 CLUSTER_NAME=noam-c3
 STORAGE_NAME=noamc3hdistorage
 CONTAINER_NAME=noam-c3-2021-04-06t10-05-57-099z
+MY_SERVER="homework-tester.westeurope.cloudapp.azure.com/"
 
 # Create the SAS using the GUI in the portal, by going to the storage, select "..." and there was "generate SAS"
 SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
@@ -57,7 +58,7 @@ y=`curl --silent -k --user "admin:$LIVY_PASS"  -H "Content-Type: application/jso
 
 #echo Y=$y
 #echo "=============="
-appId=`echo $y | jq .appId`
+appId=`echo $y | jq -r .appId`
 #echo APP ID = $appId
 
 # get the logs (maybe too early )
@@ -66,7 +67,7 @@ appId=`echo $y | jq .appId`
 #logs=`ssh sshuser@$CLUSTER_NAME-ssh.azurehdinsight.net yarn logs -applicationId $appId`
 #echo LOGS =======
 #echo $logs > log_output
-echo To see the logs:     https://$MY_SERVER/spark/logs?appId=$appId
+echo To see the logs:     http://$MY_SERVER/spark/logs?appId=$appId
 
 
 
