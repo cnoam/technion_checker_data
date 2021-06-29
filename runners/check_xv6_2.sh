@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 # test XV6 codebase by unzipping the user supplied file, compiling and running.
 #
 # the code must be based on my own commit, so the testing code is already inside
@@ -37,7 +37,7 @@ git apply -3 $PATCH_DIR/testcode_2.patch
 set +e
 
 # first compile etc. so random output does not contaminate the user's program output
-make fs.img xv6.img
+make fs.img xv6.img > /dev/null
 if [ $? -ne 0 ]; then
     echo "------------>> Failed compiling your patch."
     exit 1
@@ -49,18 +49,6 @@ fi
 
 #
 echo --- finished the tested run.
-set +e
-
-echo Comparing output , $GOLDEN
-python3 $COMPARATOR output $GOLDEN
-retVal=$?
-if [ $retVal -eq 42 ]; then
-    echo "Sorry: actual output is different from the required output"
-    exit 42
-fi
-if [ $retVal -ne 0 ]; then
-    echo "Sorry: some error occured. Please examine the STDERR"
-    exit 43
-fi
-popd
+cat output
+popd > /dev/null
 echo ---------- run OK
