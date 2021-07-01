@@ -39,6 +39,11 @@ BATCH_ID=`echo $x | cut -d: -f 2-2 | cut -d, -f 1`
 # {"id":11,"state":"starting","appId":null,"appInfo":{"driverLogUrl":null,"sparkUiUrl":null},"log":["stdout: ","\nstderr: ","\nYARN Diagnostics: "]}
 
 set +e
+echo $x | grep 404 > blackhole
+if [ $? -eq 0  ]; then
+   echo "====  Connection Error:  It looks like the Spark cluster if OFFLINE  ====="
+   exit 1
+fi
 echo $x | grep starting > blackhole
 if [ $? -ne 0  ]; then
    echo "Job submission failed. See the log in Azure portal for batch ID " $BATCH_ID
