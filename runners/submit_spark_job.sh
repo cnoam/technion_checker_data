@@ -1,13 +1,25 @@
 #!/bin/bash -eu
 LIVY_PASS="%Qq12345678"
 SRC_FILE=$1
+
+#test setup
 CLUSTER_NAME=noam-c3
 STORAGE_NAME=noamc3hdistorage
 CONTAINER_NAME=noam-c3-2021-04-06t10-05-57-099z
-MY_SERVER="homework-tester.westeurope.cloudapp.azure.com/"
-
-# Create the SAS using the GUI in the portal, by going to the storage, select "..." and there was "generate SAS"
+MY_SERVER=homework-tester.westeurope.cloudapp.azure.com
 SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
+
+#production setup
+CLUSTER_NAME=noam-spark
+STORAGE_NAME=noamcluster1hdistorage
+CONTAINER_NAME=ex2
+# Create the SAS using the GUI in the portal, by going to the storage,
+# in "Data storage" select "Containers.
+# select the container (e.g. "ex2" ).
+# on the right hand side there is "..." and insdie "generate SAS"
+SECRET_SIG="sp=rw&st=2021-07-01T12:00:01Z&se=2025-01-01T21:40:51Z&spr=https&sv=2020-02-10&sr=c&sig=nCydcOygfUbu2Z66BPsjeIkF54kLSArJi0H%2BXXhL54w%3D"
+
+
 # for the uploaded file (to the azure storage) we keep only the relative name to avoid directory naming problems
 REL_PATH_SRC_FILE=`echo $SRC_FILE | cut -d'/' -f 4`
 
@@ -32,9 +44,9 @@ x=`curl --silent -k --user "admin:$LIVY_PASS" \
 "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches" \
 -H "X-Requested-By: admin" \
 -H "Content-Type: application/json" `
-   
+
 BATCH_ID=`echo $x | cut -d: -f 2-2 | cut -d, -f 1`
-   
+
 # the response looks like
 # {"id":11,"state":"starting","appId":null,"appInfo":{"driverLogUrl":null,"sparkUiUrl":null},"log":["stdout: ","\nstderr: ","\nYARN Diagnostics: "]}
 
