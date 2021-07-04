@@ -50,6 +50,33 @@ BATCH_ID=`echo $x | cut -d: -f 2-2 | cut -d, -f 1`
 # the response looks like
 # {"id":11,"state":"starting","appId":null,"appInfo":{"driverLogUrl":null,"sparkUiUrl":null},"log":["stdout: ","\nstderr: ","\nYARN Diagnostics: "]}
 
+get_app_id(){
+  # check the status of the batch
+  y=`curl --silent -k --user "admin:$LIVY_PASS"  -H "Content-Type: application/json"  \
+    "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches/$1"   \
+    -H "X-Requested-By: admin"`
+
+  # set the GLOBAL "appId"
+  appId=`echo $y | jq -r .appId`
+  echo get_app_id   APP ID = $appId
+}
+
+wait_for_app_id() {
+# param: $1 == batch_id
+# wait up to 20 seconds to get the App ID.
+    for i in $(seq 1 20); do
+      sleep 1
+      get_app_id $1
+      echo ID = $appId
+      if [[ $appId =~ "application" ]]; then
+        echo "Found ID = "$appId
+        return 0
+      else echo "still don't have ID for batch " $1
+      fi
+    done
+    return 1
+}
+
 set +e
 echo $x | grep 404 > blackhole
 if [ $? -eq 0  ]; then
@@ -66,17 +93,14 @@ fi
 
 echo "BATCH ID = " $BATCH_ID
 
-sleep 10
-set -e
-# check the status of the batch
-y=`curl --silent -k --user "admin:$LIVY_PASS"  -H "Content-Type: application/json"  \
-    "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches/$BATCH_ID"   \
-    -H "X-Requested-By: admin"`
 
-#echo Y=$y
-#echo "=============="
-appId=`echo $y | jq -r .appId`
-#echo APP ID = $appId
+# While testing, I saw that sometime it takes more than 20 sec to get the appId.
+# so I prefer to return immedialtly, and let the user query using the batch ID ( from the Checker)
+#wait_for_app_id $BATCH_ID
+#if [ $? -ne 0  ]; then
+#   echo "Job submission failed. See the log in Azure portal for batch ID " $BATCH_ID
+#fi
+set -e
 
 # get the logs (maybe too early )
 # MUST use public key here.
@@ -84,7 +108,7 @@ appId=`echo $y | jq -r .appId`
 #logs=`ssh sshuser@$CLUSTER_NAME-ssh.azurehdinsight.net yarn logs -applicationId $appId`
 #echo LOGS =======
 #echo $logs > log_output
-echo To see the logs:     http://$MY_SERVER/spark/logs?appId=$appId
+echo To see the logs:     http://$MY_SERVER/spark/logs?batchId=$BATCH_ID
 
 
 
