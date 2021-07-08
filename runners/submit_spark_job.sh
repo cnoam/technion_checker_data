@@ -39,7 +39,7 @@ x=`curl --silent -k --user "admin:$LIVY_PASS" \
 -X POST --data "{ \"file\":\"wasbs:///$REL_PATH_SRC_FILE\" , \
 \"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\", \
 \"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\",  \
-\"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8\" }\
+\"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8,com.microsoft.azure:spark-mssql-connector:1.0.1\" }\
  }" \
 "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches" \
 -H "X-Requested-By: admin" \
