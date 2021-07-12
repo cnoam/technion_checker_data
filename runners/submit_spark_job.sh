@@ -1,4 +1,5 @@
 #!/bin/bash -eu
+
 LIVY_PASS="%Qq12345678"
 SRC_FILE=$1
 
@@ -27,7 +28,8 @@ REL_PATH_SRC_FILE=`echo $SRC_FILE | cut -d'/' -f 4`
 echo Uploading source file $SRC_FILE
 export AZCOPY_LOG_LOCATION="/logs"
 export AZCOPY_JOB_PLAN_LOCATION="/logs"
-./azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG"
+PATH=$PATH:/data/runners  # so azcopy etc. is in the path
+azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG" 
 
 
 echo Sending source for execution
