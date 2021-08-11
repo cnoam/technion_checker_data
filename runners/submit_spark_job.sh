@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 LIVY_PASS="%Qq12345678"
 SRC_FILE=$1
@@ -10,6 +10,8 @@ MY_SERVER=jobs.eastus.cloudapp.azure.com
 
 #SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
 #SECRET_SIG="sp=racwl&st=2021-08-10T09:21:43Z&se=2022-03-01T19:21:43Z&sv=2020-08-04&sr=c&sig=h2X%2BvHhAtbF%2BnXvCdfKzcNx7hGWW%2FDCvczyR4pBA30w%3D"
+
+# ---------------------
 #production setup
 CLUSTER_NAME=noam-spark
 STORAGE_NAME=noamcluster1hdistorage
@@ -28,7 +30,8 @@ REL_PATH_SRC_FILE=`echo $SRC_FILE | cut -d'/' -f 4`
 echo Uploading source file $SRC_FILE
 export AZCOPY_LOG_LOCATION="/logs"
 export AZCOPY_JOB_PLAN_LOCATION="/logs"
-PATH=$PATH:/data/runners  # so azcopy etc. is in the path
+PATH=$PATH:$CHECKER_DATA_DIR/runners  # so azcopy etc. is in the path
+echo PATH==$PATH
 azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG" 
 
 
@@ -39,8 +42,8 @@ echo Sending source for execution
 #https://mvnrepository.com/artifact/org.apache.spark/spark-sql-kafka-0-10_2.12
 x=`curl --silent -k --user "admin:$LIVY_PASS" \
 -X POST --data "{ \"file\":\"wasbs:///$REL_PATH_SRC_FILE\" , \
-\"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/anaconda/envs/py35/bin/python\", \
-\"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/anaconda/envs/py35/bin/python\",  \
+\"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\", \
+\"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\",  \
 \"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8,com.microsoft.azure:spark-mssql-connector:1.0.1\" }\
  }" \
 "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches" \
@@ -111,4 +114,9 @@ set -e
 #logs=`ssh sshuser@$CLUSTER_NAME-ssh.azurehdinsight.net yarn logs -applicationId $appId`
 #echo LOGS =======
 #echo $logs > log_output
+echo ================================================================
 echo To see the logs:     http://$MY_SERVER/spark/logs?batchId=$BATCH_ID
+echo  =====
+echo
+echo To manualy delete this job, visit the link below. WARNING: no confirmation! I will try to delete without questions!
+echo http://$MY_SERVER/spark/delete?batchId=$BATCH_ID
