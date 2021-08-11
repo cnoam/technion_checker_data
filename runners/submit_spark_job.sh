@@ -2,14 +2,14 @@
 
 LIVY_PASS="%Qq12345678"
 SRC_FILE=$1
-
+MY_SERVER=jobs.eastus.cloudapp.azure.com
 #test setup
-CLUSTER_NAME=noam-c3
-STORAGE_NAME=noamc3hdistorage
-CONTAINER_NAME=noam-c3-2021-04-06t10-05-57-099z
-MY_SERVER=homework-tester.westeurope.cloudapp.azure.com
-SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
+#CLUSTER_NAME=noam-c3
+#STORAGE_NAME=noamc3hdistorage
+#CONTAINER_NAME=noam-c3-2021-04-06t10-05-57-099z
 
+#SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
+#SECRET_SIG="sp=racwl&st=2021-08-10T09:21:43Z&se=2022-03-01T19:21:43Z&sv=2020-08-04&sr=c&sig=h2X%2BvHhAtbF%2BnXvCdfKzcNx7hGWW%2FDCvczyR4pBA30w%3D"
 #production setup
 CLUSTER_NAME=noam-spark
 STORAGE_NAME=noamcluster1hdistorage
@@ -39,8 +39,8 @@ echo Sending source for execution
 #https://mvnrepository.com/artifact/org.apache.spark/spark-sql-kafka-0-10_2.12
 x=`curl --silent -k --user "admin:$LIVY_PASS" \
 -X POST --data "{ \"file\":\"wasbs:///$REL_PATH_SRC_FILE\" , \
-\"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\", \
-\"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\",  \
+\"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/anaconda/envs/py35/bin/python\", \
+\"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/anaconda/envs/py35/bin/python\",  \
 \"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8,com.microsoft.azure:spark-mssql-connector:1.0.1\" }\
  }" \
 "https://$CLUSTER_NAME.azurehdinsight.net/livy/batches" \
@@ -78,7 +78,8 @@ wait_for_app_id() {
     done
     return 1
 }
-
+echo $x
+echo =============
 set +e
 echo $x | grep 404 > blackhole
 if [ $? -eq 0  ]; then
@@ -93,7 +94,7 @@ else
    #echo "You can check the status at https://$CLUSTER_NAME.azurehdinsight.net/yarnui/hn/cluster"
 fi
 
-echo "BATCH ID = " $BATCH_ID
+echo "BATCH ID = "$BATCH_ID
 
 
 # While testing, I saw that sometime it takes more than 20 sec to get the appId.
@@ -111,10 +112,3 @@ set -e
 #echo LOGS =======
 #echo $logs > log_output
 echo To see the logs:     http://$MY_SERVER/spark/logs?batchId=$BATCH_ID
-
-
-
-
-
-
-
