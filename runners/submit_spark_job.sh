@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
 # for unknown reason, if the azcopy returns with a failure when run from the command line, it hangs when runs in the script
 # and don't even trip the timeout.
@@ -39,7 +39,7 @@ export AZCOPY_LOG_LOCATION="/logs"
 export AZCOPY_JOB_PLAN_LOCATION="/logs"
 PATH=$CHECKER_DATA_DIR/runners:$PATH  # so azcopy etc. is in the path
 echo PATH==$PATH
-timeout $AZ_COPY_TIMEOUT_SEC `azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG"  > junk_azcopy`
+azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG"
 # bad syntax below
 #[ $? -ne 0 ]; then
 #   echo azcopy timed out or just failed. Is the server properly configured? Run the azcopy command from a terminal and check the output
