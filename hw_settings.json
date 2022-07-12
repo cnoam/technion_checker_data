@@ -2,7 +2,7 @@
      "94210": [
           {
                "id": 1,
-               "matcher": "check_xv6_1.py",
+               "matcher": "ignore_whitespace_match.py",
                "runner": "check_xv6.sh",
                "timeout": 200,
                "allowed_extension": ["patch"]
@@ -10,8 +10,8 @@
         {
                "id": 2,
                "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6_2.sh",
-               "timeout": 200,
+               "runner": "check_xv6.sh",
+               "timeout": 50,
                "allowed_extension": ["patch"]
           }
           ],
@@ -32,10 +32,11 @@
       },
       {
           "id": 2,
-          "matcher": "ignore_whitespace_match.py",
-          "runner": "check_java_file_ex2.sh",
+          "matcher": "exact_match.py",
+          "runner": "check_java_file.sh",
           "timeout": 1190,
-          "allowed_extension": ["zip"]
+          "allowed_extension": ["zip"],
+	  "runner_file": "94219/ex2_data/Main2.java"
       },
          {
           "id": 3,
@@ -48,7 +49,7 @@
       }
      ] ,
      
-      "96224": [
+      "94704": [
      {
           "id": 2,
           "matcher": "always_true.py",
