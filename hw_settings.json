@@ -4,7 +4,7 @@
                "id": 1,
                "matcher": "ignore_whitespace_match.py",
                "runner": "check_xv6.sh",
-               "timeout": 200,
+               "timeout": 19,
                "allowed_extension": ["patch"]
           },
         {
@@ -49,7 +49,7 @@
       }
      ] ,
      
-      "94704": [
+      "96224": [
      {
           "id": 2,
           "matcher": "always_true.py",

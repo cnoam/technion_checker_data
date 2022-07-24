@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 # for unknown reason, if the azcopy returns with a failure when run from the command line, it hangs when runs in the script
 # and don't even trip the timeout.
@@ -25,9 +25,11 @@ else
    # Create the SAS using the GUI in the portal, by going to the storage,
    # in "Data storage" select "Containers.
    # select the container (e.g. "ex2" ).
-   # on the right hand side there is "..." and insdie "generate SAS"
+   # on the right hand side there is "..." and inside "generate SAS"
+   # choose permissions (read,add,create,write)
+   # set the date range properly!
    # key for noam1hdstorage
-   SECRET_SIG="sp=racw&st=2022-03-22T14:06:27Z&se=2022-06-30T21:06:27Z&sv=2020-08-04&sr=c&sig=IrLmcnjxV9TJWPOl4Da0%2F%2FdMbXzoC0eGMgQsL6cYAYk%3D"
+   SECRET_SIG="sp=racw&st=2022-07-20T11:52:20Z&se=2023-02-20T20:52:20Z&spr=https&sv=2021-06-08&sr=c&sig=YTB1kVUGIz0vnhmnsaoeB%2B%2B%2FVmnEoQ5aj5YeI19h1gk%3D"
 fi
 
 # for the uploaded file (to the azure storage) we keep only the relative name to avoid directory naming problems
