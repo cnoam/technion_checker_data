@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
 # for unknown reason, if the azcopy returns with a failure when run from the command line, it hangs when runs in the script
 # and don't even trip the timeout.
@@ -36,20 +36,24 @@ fi
 REL_PATH_SRC_FILE=`echo $SRC_FILE | cut -d'/' -f 4`
 
 # upload the file to storage
-echo Uploading source file $SRC_FILE
+echo ">>>" Uploading source file $SRC_FILE
+echo
+
 export AZCOPY_LOG_LOCATION="/logs"
 export AZCOPY_JOB_PLAN_LOCATION="/logs"
 PATH=$CHECKER_DATA_DIR/runners:$PATH  # so azcopy etc. is in the path
-echo PATH==$PATH
-azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG"
-# bad syntax below
-#[ $? -ne 0 ]; then
-#   echo azcopy timed out or just failed. Is the server properly configured? Run the azcopy command from a terminal and check the output
-#fi
+#echo PATH=$PATH
 
-echo Sending source for execution
+azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG" > /dev/null
+if [ $? -ne 0 ]; then
+  echo azcopy timed out or just failed. Is the server properly configured? Run the azcopy command from a terminal and check the output
+  exit 1
+fi
+
+echo ">>>" Sending source for execution
 # send to spark for processing
 
+set +e
 # We need Kafka package with the Spark. Since Azure uses Spark 2.4, we need to use a matching package.
 #https://mvnrepository.com/artifact/org.apache.spark/spark-sql-kafka-0-10_2.12
 x=`curl --silent -k --user "admin:$LIVY_PASS" \
@@ -62,6 +66,12 @@ x=`curl --silent -k --user "admin:$LIVY_PASS" \
 -H "X-Requested-By: admin" \
 -H "Content-Type: application/json" `
 
+if [ $? -ne 0 ]; then
+   echo Failed submitting the spark job. This is a server error.
+   echo If you expected the server to work now, please send email to cnoam@technion.ac.il
+   exit 1
+fi
+set -e
 BATCH_ID=`echo $x | cut -d: -f 2-2 | cut -d, -f 1`
 
 # the response looks like
@@ -96,16 +106,16 @@ wait_for_app_id() {
 echo $x
 echo =============
 set +e
-echo $x | grep 404 > blackhole
+echo $x | grep 404 > /dev/null
 if [ $? -eq 0  ]; then
    echo "====  Connection Error:  It looks like the Spark cluster if OFFLINE  ====="
    exit 1
 fi
-echo $x | grep starting > blackhole
+echo $x | grep starting > /dev/null
 if [ $? -ne 0  ]; then
    echo "Job submission failed. See the log in Azure portal for batch ID " $BATCH_ID
 else
-   echo "Job is starting..."
+   echo ">>> Job is starting..."
    #echo "You can check the status at https://$CLUSTER_NAME.azurehdinsight.net/yarnui/hn/cluster"
 fi
 
