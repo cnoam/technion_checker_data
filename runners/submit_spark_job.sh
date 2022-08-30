@@ -13,11 +13,12 @@ TEST_MODE=0
 
 if [ $TEST_MODE -eq 1 ]; then
    echo ---- test setup -----
-   CLUSTER_NAME=noam-c3
-   STORAGE_NAME=noamc3hdistorage
-   CONTAINER_NAME=noam-c3-2021-04-06t10-05-57-099z
-   SECRET_SIG="sp=racwl&st=2021-06-24T05:00:23Z&se=2021-09-01T13:28:23Z&spr=https&sv=2020-02-10&sr=c&sig=4IIHWei9gAY4LqkZd3qN7v%2B%2BqU8JWHHMzAJDCpokAJ0%3D"
-else
+   CLUSTER_NAME=spark3
+   STORAGE_NAME=noamcluster1hdistorage
+   CONTAINER_NAME=proj
+   # key for noamcluster1hdistorage/proj
+   SECRET_SIG="sp=racwdl&st=2022-08-22T16:58:52Z&se=2022-09-30T00:58:52Z&spr=https&sv=2021-06-08&sr=c&sig=HzwKK2Bq%2FxdclT6ABc78IL4vY7%2Fc%2FdcEc8zNtT2XLZ0%3D"
+ else
    #production setup
    CLUSTER_NAME=spark96224
    STORAGE_NAME=noamcluster1hdistorage
@@ -28,7 +29,7 @@ else
    # on the right hand side there is "..." and inside "generate SAS"
    # choose permissions (read,add,create,write)
    # set the date range properly!
-   # key for noam1hdstorage
+   # key for noam1hdstorage/ex2
    SECRET_SIG="sp=racw&st=2022-07-20T11:52:20Z&se=2023-02-20T20:52:20Z&spr=https&sv=2021-06-08&sr=c&sig=YTB1kVUGIz0vnhmnsaoeB%2B%2B%2FVmnEoQ5aj5YeI19h1gk%3D"
 fi
 
@@ -38,6 +39,14 @@ REL_PATH_SRC_FILE=`echo $SRC_FILE | cut -d'/' -f 4`
 # upload the file to storage
 echo ">>>" Uploading source file $SRC_FILE
 echo
+
+#
+## sanity test: we forbid old incompatible package
+#grep "org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8" $SRC_FILE
+#if [ $? -eq 0 ]; then
+#  echo "OOPS! JAR package is not compatible with spark v3. Please remove it from the code (kafka and azure sql)"
+#  exit 1
+#fi
 
 export AZCOPY_LOG_LOCATION="/logs"
 export AZCOPY_JOB_PLAN_LOCATION="/logs"
@@ -56,9 +65,33 @@ echo ">>>" Sending source for execution
 set +e
 # We need Kafka package with the Spark. Since Azure uses Spark 2.4, we need to use a matching package.
 #https://mvnrepository.com/artifact/org.apache.spark/spark-sql-kafka-0-10_2.12
+
+#For the Spark 3.1.2 version,
+# the Apache PySpark kernel is removed and a new Python 3.8 environment
+# is installed under /usr/bin/miniforge/envs/py38/bin which is used by
+# the PySpark3 kernel. The PYSPARK_PYTHON and PYSPARK3_PYTHON
+# environment variables are updated with the following:
+#
+#problem reading JARs : https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/issues/1226
+# loading JAR from jupyter notebook: https://stackoverflow.com/questions/35946868/adding-custom-jars-to-pyspark-in-jupyter-notebook
+#export PYSPARK_PYTHON=${PYSPARK_PYTHON:-/usr/bin/miniforge/envs/py38/bin/python}
+#export PYSPARK3_PYTHON=${PYSPARK_PYTHON:-/usr/bin/miniforge/envs/py38/bin/python}
+#   \"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8,com.microsoft.azure:spark-mssql-connector:1.0.1\" }\
+#
+# Use this for spark 3.x :
+#\"conf\": { \
+#            \"spark.yarn.maxAppAttempts\" : \"1\" , \
+#            \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/miniforge/envs/py38/bin/python\", \
+#            \"spark.yarn.appMasterEnv.PYSPARK3_PYTHON\" : \"/usr/bin/miniforge/envs/py38/bin/python\", \
+#            \"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/miniforge/envs/py38/bin/python\"  \
+#            }\
+# }" \
+
 x=`curl --silent -k --user "admin:$LIVY_PASS" \
 -X POST --data "{ \"file\":\"wasbs:///$REL_PATH_SRC_FILE\" , \
-\"conf\": { \"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\", \
+\"conf\": { \
+\"spark.yarn.maxAppAttempts\" : \"1\" , \
+\"spark.yarn.appMasterEnv.PYSPARK_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\", \
 \"spark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON\" : \"/usr/bin/anaconda/envs/py35/bin/python\",  \
 \"spark.jars.packages\" : \"org.apache.spark:spark-sql-kafka-0-10_2.12:2.4.8,com.microsoft.azure:spark-mssql-connector:1.0.1\" }\
  }" \
