@@ -20,5 +20,5 @@ export AZCOPY_JOB_PLAN_LOCATION="/logs"
 echo $0
 WORK_DIR=`echo $0 | sed 's|\(.*\)/.*|\1|'`
 echo $WORK_DIR
-$WORK_DIR/azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$SRC_FILE?$SECRET_SIG" 
+$WORK_DIR/azcopy copy --log-level=NONE $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$SRC_FILE?$SECRET_SIG"
 
