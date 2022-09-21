@@ -53,7 +53,7 @@ export AZCOPY_JOB_PLAN_LOCATION="/logs"
 PATH=$CHECKER_DATA_DIR/runners:$PATH  # so azcopy etc. is in the path
 #echo PATH=$PATH
 
-azcopy copy $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG" > /dev/null
+azcopy copy --log-level=NONE $SRC_FILE "https://$STORAGE_NAME.blob.core.windows.net/$CONTAINER_NAME/$REL_PATH_SRC_FILE?$SECRET_SIG" > /dev/null
 if [ $? -ne 0 ]; then
   echo azcopy timed out or just failed. Is the server properly configured? Run the azcopy command from a terminal and check the output
   exit 1
@@ -141,7 +141,7 @@ echo =============
 set +e
 echo $x | grep 404 > /dev/null
 if [ $? -eq 0  ]; then
-   echo "====  Connection Error:  It looks like the Spark cluster if OFFLINE  ====="
+   echo "====  Connection Error:  It looks like the Spark cluster is OFFLINE  ====="
    exit 1
 fi
 echo $x | grep starting > /dev/null
