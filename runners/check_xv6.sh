@@ -30,8 +30,7 @@ cp -r $MASTER_SRC_DIR .
 cd xv6-public
 # start with a well known commit
 # for homework 4:
-# git checkout syscall_waitpid
-git checkout signal   # <<<<<<<<<<<<<<<<<<<<<< WARNING <<<<<<<<<<<< This is hardwired
+git checkout syscall_waitpid
 
 set +e
 git apply --verbose -3 $INPUT_SRC --whitespace=nowarn

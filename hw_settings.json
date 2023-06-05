@@ -1,14 +1,21 @@
 {
      "94210": [
-          {
-               "id": 1,
-               "matcher": "ignore_whitespace_match.py",
-               "runner": "check_xv6.sh",
-               "timeout": 19,
-               "allowed_extension": ["patch"]
-          },
         {
                "id": 2,
+               "matcher": "ignore_whitespace_match.py",
+               "runner": "check_c.sh",
+               "timeout": 50,
+               "allowed_extension": ["c"]
+          },
+          {
+               "id": 4,
+               "matcher": "ignore_whitespace_match.py",
+               "runner": "check_xv6.sh",
+               "timeout": 50,
+               "allowed_extension": ["patch"]
+          },
+          {
+               "id": 5,
                "matcher": "ignore_whitespace_match.py",
                "runner": "check_xv6.sh",
                "timeout": 50,
