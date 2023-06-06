@@ -46,7 +46,7 @@ set -e
 
 # overwrite files the user may have tampered with. This cannot be in the repo 
 # due to the patch referring to earlier commit.
-cp $PATCH_DIR/test_signals.c  .
+cp $PATCH_DIR/init_ps.c  init.c
 set +e
 
 # first compile etc. so random output does not contaminate the user's program output
